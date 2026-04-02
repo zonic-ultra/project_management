@@ -12,7 +12,6 @@ import com.dendev.project_management.exceptions.ResourceNotFoundException;
 import com.dendev.project_management.repository.UserRepository;
 import com.dendev.project_management.security.JwtUtils;
 import com.dendev.project_management.service.UserService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -36,58 +34,58 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-//
-//    @Autowired
-//    private JwtUtils jwtUtils;
-//
-//    @Override
-//    public Response<?> signUp(RegisterRequest registerRequest) {
-//        Optional<User> existingUser = userRepository.findByUsername(registerRequest.getUsername());
-//
-//        if (existingUser.isPresent()){
-//            throw new BadRequestException("Username already exists");
-//        }
-//
-//        Role role = Role.USER;
-//
-//        if (registerRequest.getRole() != null) {
-//            role = registerRequest.getRole();
-//        }
-//
-//        User userToSave = User.builder()
-//                .name(registerRequest.getUsername())
-//                .username(registerRequest.getUsername())
-//                .password(passwordEncoder.encode(registerRequest.getPassword()))
-//                .role(role)
-//                .createdAt(registerRequest.getCreatedAt())
-//                .build();
-//        userRepository.save(userToSave);
-//
-//        return Response.builder()
-//                .status(200)
-////                .data(userToSave)
-//                .message("User was successfully registered...")
-//                .build();
-//    }
-//
-//    @Override
-//    public Response<?> login(LoginRequest loginRequest) {
-//        User user = userRepository.findByUsername(loginRequest.getUsername())
-//                .orElseThrow(()-> new BadRequestException("Username not found"));
-//
-//        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-//            throw new BadRequestException("Invalid password");
-//        }
-//
-//        String token = jwtUtils.generateToken(user.getUsername());
-//
-//        return Response.builder()
-//                .status(200)
-//                .message("User login successfully")
-//                .data(token)
-//                .build();
-//
-//    }
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Override
+    public Response<?> signUp(RegisterRequest registerRequest) {
+        Optional<User> existingUser = userRepository.findByUsername(registerRequest.getUsername());
+
+        if (existingUser.isPresent()){
+            throw new BadRequestException("Username already exists");
+        }
+
+        Role role = Role.USER;
+
+        if (registerRequest.getRole() != null) {
+            role = registerRequest.getRole();
+        }
+
+        User userToSave = User.builder()
+                .name(registerRequest.getUsername())
+                .username(registerRequest.getUsername())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(role)
+                .createdAt(registerRequest.getCreatedAt())
+                .build();
+        userRepository.save(userToSave);
+
+        return Response.builder()
+                .status(200)
+//                .data(userToSave)
+                .message("User was successfully registered...")
+                .build();
+    }
+
+    @Override
+    public Response<?> login(LoginRequest loginRequest) {
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(()-> new BadRequestException("Username not found"));
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new BadRequestException("Invalid password");
+        }
+
+        String token = jwtUtils.generateToken(user.getUsername());
+
+        return Response.builder()
+                .status(200)
+                .message("User login successfully")
+                .data(token)
+                .build();
+
+    }
 
     @Override
     public Response<?> getAllUsers() {
@@ -115,21 +113,11 @@ public class UserServiceImpl implements UserService {
         return user.get();
     }
 
-//    private User getCurrentUserEntity(){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        String username = authentication.getName();
-//        Optional<User> user = Optional.of(userRepository.findByUsername(username)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found!")));
-//
-//        return user.get();
-//    }
-
     @Override
     public Response<?> updateUser(Long id, UserDto userDto) {
         User existingUserToUpdate = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!"));
 
-        if (existingUserToUpdate.getUsername()!= null) {
+        if (existingUserToUpdate.getUsername().equals(userDto.getUsername())) {
             existingUserToUpdate.setUsername(userDto.getUsername());
         }
 

@@ -7,8 +7,8 @@ import com.dendev.project_management.dto.user.UserDto;
 import com.dendev.project_management.entity.User;
 
 public interface UserService {
-//    Response<?>  signUp(RegisterRequest registerRequest);
-//    Response<?> login(LoginRequest loginRequest);
+    Response<?>  signUp(RegisterRequest registerRequest);
+    Response<?> login(LoginRequest loginRequest);
     Response<?>  getAllUsers();
     User getCurrentUser();
     Response<?> updateUser(Long id, UserDto userDto);

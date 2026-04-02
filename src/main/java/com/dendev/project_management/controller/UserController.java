@@ -1,7 +1,6 @@
 package com.dendev.project_management.controller;
 
 import com.dendev.project_management.dto.Response;
-import com.dendev.project_management.dto.user.UserResponseDto;
 import com.dendev.project_management.entity.User;
 import com.dendev.project_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/current")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> getCurrentUser() {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
