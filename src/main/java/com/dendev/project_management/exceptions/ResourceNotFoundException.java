@@ -1,4 +1,4 @@
-package com.dendev.project_management.exception;
+package com.dendev.project_management.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

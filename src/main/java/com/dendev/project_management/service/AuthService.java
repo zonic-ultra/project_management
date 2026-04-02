@@ -1,4 +1,5 @@
 package com.dendev.project_management.service;
 
-public class AuthService {
+public interface AuthService {
+
 }
