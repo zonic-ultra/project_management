@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
     public Response<?> updateUser(Long id, UserDto userDto) {
         User existingUserToUpdate = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!"));
 
-        if (existingUserToUpdate.getUsername().equals(userDto.getUsername())) {
+        if (existingUserToUpdate.getUsername()!= null) {
             existingUserToUpdate.setUsername(userDto.getUsername());
         }
 

@@ -12,5 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 public class Task {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
 }

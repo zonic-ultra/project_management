@@ -1,12 +1,12 @@
 package com.dendev.project_management.controller;
 
 import com.dendev.project_management.dto.Response;
-import com.dendev.project_management.dto.project.ProjectRequestDto;
+import com.dendev.project_management.dto.project.ProjectDto;
+import com.dendev.project_management.dto.project.ProjectResponseDto;
 import com.dendev.project_management.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,19 +17,18 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<?>>  getAllProjects() {
         return ResponseEntity.ok(projectService.getProjects());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Response<?>> createProject(@RequestBody @Valid ProjectRequestDto projectRequestDto){
-        return ResponseEntity.ok(projectService.createProject(projectRequestDto));
+    public ResponseEntity<Response<?>> createProject(@RequestBody @Valid ProjectResponseDto projectResponseDto){
+        return ResponseEntity.ok(projectService.createProject(projectResponseDto));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Response<?>> updateProject(@RequestParam("id") Long id, @RequestBody @Valid ProjectRequestDto projectRequestDto){
-        return ResponseEntity.ok(projectService.updateProject(id, projectRequestDto));
+    public ResponseEntity<Response<?>> updateProject(@RequestParam("id") Long id, @RequestBody @Valid ProjectDto projectDto){
+        return ResponseEntity.ok(projectService.updateProject(id, projectDto));
     }
 
     @DeleteMapping("/delete")

@@ -1,6 +1,5 @@
 package com.dendev.project_management.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +10,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Builder
@@ -24,7 +21,7 @@ import java.util.List;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long project_id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String project_name;
@@ -32,18 +29,10 @@ public class Project {
     @Column(nullable = false)
     private String project_description;
 
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    private List<Task> tasks = new ArrayList<>();
-
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
-    private User user;
 }
