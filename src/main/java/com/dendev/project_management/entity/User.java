@@ -23,7 +23,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(unique = true)
     private String name;
@@ -44,7 +44,7 @@ public class User {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Task> tasks = new ArrayList<>();
+    @OneToMany(mappedBy ="user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks = new ArrayList<>();
 }
 

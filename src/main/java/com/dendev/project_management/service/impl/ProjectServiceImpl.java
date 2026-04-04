@@ -1,8 +1,7 @@
 package com.dendev.project_management.service.impl;
 
 import com.dendev.project_management.dto.Response;
-import com.dendev.project_management.dto.project.ProjectDto;
-import com.dendev.project_management.dto.project.ProjectResponseDto;
+import com.dendev.project_management.dto.project.ProjectRequestDto;
 import com.dendev.project_management.entity.Project;
 import com.dendev.project_management.exceptions.ResourceNotFoundException;
 import com.dendev.project_management.repository.ProjectRepository;
@@ -19,15 +18,15 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
 
     @Override
-    public Response<?> updateProject(Long id, ProjectDto projectDto) {
+    public Response<?> updateProject(Long id, ProjectRequestDto projectRequestDto) {
         Project project = projectRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Project not found"));
 
         if (project.getProject_name() != null){
-            project.setProject_name(projectDto.getProject_name());
+            project.setProject_name(projectRequestDto.getProject_name());
         }
 
         if(project.getProject_description() != null){
-            project.setProject_description(projectDto.getProject_description());
+            project.setProject_description(projectRequestDto.getProject_description());
         }
 
         projectRepository.save(project);
@@ -65,14 +64,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Response<?> createProject(ProjectResponseDto projectResponseDto) {
+    public Response<?> createProject(ProjectRequestDto projectRequestDto) {
 
 
         Project project = Project.builder()
-                .project_name(projectResponseDto.getProject_name())
-                .project_description(projectResponseDto.getProject_description())
-                .createdAt(projectResponseDto.getCreatedAt())
-                .updatedAt(projectResponseDto.getUpdatedAt())
+                .project_name(projectRequestDto.getProject_name())
+                .project_description(projectRequestDto.getProject_description())
                 .build();
 
         Project savedProject = projectRepository.save(project);
