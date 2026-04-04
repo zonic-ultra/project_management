@@ -1,4 +1,4 @@
 package com.dendev.project_management.dto.task;
 
-public class TaskRequest {
+public class TaskDto {
 }
