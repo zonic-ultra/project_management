@@ -1,10 +1,14 @@
 package com.dendev.project_management.dto.project;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectRequestDto {
     @NotBlank(message = "Project name is required!")
     @Size(min = 2, max = 100, message = "Description must be between 2 and 100 characters")

@@ -1,15 +1,18 @@
 package com.dendev.project_management.dto.task;
 
+import com.dendev.project_management.entity.Project;
+import com.dendev.project_management.entity.User;
 import com.dendev.project_management.enums.TaskStatus;
-import jakarta.validation.constraints.FutureOrPresent;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskRequestDto {
 
     @NotBlank(message = "Task name is required!")
@@ -20,9 +23,6 @@ public class TaskRequestDto {
     private String description;
 
     private TaskStatus taskStatus;
-
-    @FutureOrPresent(message = "Due date must be today or in future")
-    private LocalDate dueDate;
 
     @NotNull
     private Long user_id;
