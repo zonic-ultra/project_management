@@ -6,6 +6,7 @@ import com.dendev.project_management.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<?>>  getAllProjects() {
         return ResponseEntity.ok(projectService.getProjects());
     }

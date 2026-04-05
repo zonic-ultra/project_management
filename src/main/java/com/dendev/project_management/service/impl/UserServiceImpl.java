@@ -12,6 +12,7 @@ import com.dendev.project_management.exceptions.ResourceNotFoundException;
 import com.dendev.project_management.repository.UserRepository;
 import com.dendev.project_management.security.JwtUtils;
 import com.dendev.project_management.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -112,6 +114,16 @@ public class UserServiceImpl implements UserService {
 
         return user.get();
     }
+
+//    private User getCurrentUserEntity(){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        String username = authentication.getName();
+//        Optional<User> user = Optional.of(userRepository.findByUsername(username)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found!")));
+//
+//        return user.get();
+//    }
 
     @Override
     public Response<?> updateUser(Long id, UserDto userDto) {

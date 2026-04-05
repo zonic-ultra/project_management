@@ -12,16 +12,5 @@ import lombok.Data;
 public class Response<T>{
     private int status;
     private String message;
-
-
-
     private T data;
-
-//    private String username;
-//    private String password;
-//    private String name;
-//
-//    private String token;
-//    private String expirationTime;
-//    private Role role;
 }
