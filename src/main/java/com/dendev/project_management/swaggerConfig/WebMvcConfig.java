@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Configuration
 @EnableWebMvc
 public class WebMvcConfig extends WebMvcConfigurationSupport {
+
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         // Make Swagger meta-data available via <baseURL>/v2/api-docs/

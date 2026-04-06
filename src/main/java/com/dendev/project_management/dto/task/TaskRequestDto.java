@@ -17,7 +17,7 @@ public class TaskRequestDto {
     private String task_name;
 
     @Size(min = 2, max = 500, message = "Description must be between 2 and 500 characters")
-    private String description;
+    private String contents;
 
     private TaskStatus taskStatus;
 

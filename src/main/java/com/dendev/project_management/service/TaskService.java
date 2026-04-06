@@ -8,8 +8,10 @@ import java.util.List;
 
 public interface TaskService {
     Response<TaskResponseDto> createTask(TaskRequestDto taskRequestDto);
-    Response<TaskResponseDto> updateTask(TaskRequestDto taskRequestDto);
+    Response<TaskResponseDto> updateTask(Long id, TaskRequestDto taskRequestDto);
     Response<Void> deleteTask(Long id);
     Response<TaskResponseDto> findTask(Long id);
     Response<List<TaskResponseDto>> findAllTasks();
+
+    Response<TaskResponseDto> updateTaskStatus(Long id, String username, TaskRequestDto taskRequestDto, String remark);
 }

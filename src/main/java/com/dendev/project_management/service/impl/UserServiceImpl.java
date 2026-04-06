@@ -36,68 +36,17 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-//
-//    @Autowired
-//    private JwtUtils jwtUtils;
-//
-//    @Override
-//    public Response<?> signUp(RegisterRequest registerRequest) {
-//        Optional<User> existingUser = userRepository.findByUsername(registerRequest.getUsername());
-//
-//        if (existingUser.isPresent()){
-//            throw new BadRequestException("Username already exists");
-//        }
-//
-//        Role role = Role.USER;
-//
-//        if (registerRequest.getRole() != null) {
-//            role = registerRequest.getRole();
-//        }
-//
-//        User userToSave = User.builder()
-//                .name(registerRequest.getUsername())
-//                .username(registerRequest.getUsername())
-//                .password(passwordEncoder.encode(registerRequest.getPassword()))
-//                .role(role)
-//                .createdAt(registerRequest.getCreatedAt())
-//                .build();
-//        userRepository.save(userToSave);
-//
-//        return Response.builder()
-//                .status(200)
-////                .data(userToSave)
-//                .message("User was successfully registered...")
-//                .build();
-//    }
-//
-//    @Override
-//    public Response<?> login(LoginRequest loginRequest) {
-//        User user = userRepository.findByUsername(loginRequest.getUsername())
-//                .orElseThrow(()-> new BadRequestException("Username not found"));
-//
-//        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-//            throw new BadRequestException("Invalid password");
-//        }
-//
-//        String token = jwtUtils.generateToken(user.getUsername());
-//
-//        return Response.builder()
-//                .status(200)
-//                .message("User login successfully")
-//                .data(token)
-//                .build();
-//
-//    }
+
 
     @Override
-    public Response<?> getAllUsers() {
+    public Response<List<UserResponseDto>> getAllMembers() {
         List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "username"));
 
         List<UserResponseDto> userResponse = users.stream()
                 .map(UserResponseDto::new)
                 .toList();
 
-        return Response.builder()
+        return Response.<List<UserResponseDto>>builder()
                 .status(200)
                 .message("Success")
                 .data(userResponse)
@@ -115,18 +64,9 @@ public class UserServiceImpl implements UserService {
         return user.get();
     }
 
-//    private User getCurrentUserEntity(){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        String username = authentication.getName();
-//        Optional<User> user = Optional.of(userRepository.findByUsername(username)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found!")));
-//
-//        return user.get();
-//    }
 
     @Override
-    public Response<?> updateUser(Long id, UserDto userDto) {
+    public Response<UserResponseDto> updateMember(Long id, UserDto userDto) {
         User existingUserToUpdate = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!"));
 
         if (existingUserToUpdate.getUsername()!= null) {
@@ -147,24 +87,37 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(existingUserToUpdate);
 
-        return Response.builder()
+        UserResponseDto userResponseDto = new UserResponseDto(existingUserToUpdate);
+
+        return Response.<UserResponseDto>builder()
                 .status(200)
                 .message("User updated successfully")
-                .data(existingUserToUpdate)
+                .data(userResponseDto)
                 .build();
     }
 
     @Override
-    public Response<?> deleteUser(Long id) {
+    public Response<Void> deleteMember(Long id) {
         userRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found!"));
 
         userRepository.deleteById(id);
 
-        return Response.builder()
+        return Response.<Void>builder()
                 .status(200)
                 .message("User deleted successfully")
                 .build();
+    }
+
+    @Override
+    public Response<UserResponseDto> getMember(Long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!"));
+        UserResponseDto userResponseDto = new UserResponseDto(user);
+         return Response.<UserResponseDto>builder()
+                 .status(200)
+                 .message("Member found")
+                 .data(userResponseDto)
+                 .build();
     }
 
 
