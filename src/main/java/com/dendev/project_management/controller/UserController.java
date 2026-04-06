@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,16 +25,22 @@ public class UserController {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
 
-    @GetMapping
+    @GetMapping("/get_all_member")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<?>> getAllUsers(){
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<Response<List<UserResponseDto>>> getAllUsers(){
+        return ResponseEntity.ok(userService.getAllMembers());
     }
 
-    @DeleteMapping("/delete")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<?>> deleteUser(@RequestParam("id") Long id){
-        return ResponseEntity.ok(userService.deleteUser(id));
+    @GetMapping("/get_member")
+    public ResponseEntity<Response<UserResponseDto>> getMember(@Param("id") Long id){
+        return ResponseEntity.ok(userService.getMember(id));
     }
+
+    @DeleteMapping("/delete_member")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response<Void>> deleteUser(@RequestParam("id") Long id){
+        return ResponseEntity.ok(userService.deleteMember(id));
+    }
+
 
 }

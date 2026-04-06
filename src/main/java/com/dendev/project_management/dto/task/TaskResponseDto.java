@@ -42,7 +42,7 @@ public class TaskResponseDto {
 
         if (task.getAssignedUser() != null) {
             this.user_id = task.getAssignedUser().getId();
-            this.username = task.getAssignedUser().getUsername();
+            this.username = task.getAssignedUser().getName();
         }
     }
 }

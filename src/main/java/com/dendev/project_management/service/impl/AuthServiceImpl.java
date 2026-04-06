@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private JwtUtils jwtUtils;
 
     @Override
-    public Response<?> signUp(RegisterRequest registerRequest) {
+    public Response<User> signUp(RegisterRequest registerRequest) {
         Optional<User> existingUser = userRepository.findByUsername(registerRequest.getUsername());
 
         if (existingUser.isPresent()){
@@ -52,9 +52,9 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         userRepository.save(userToSave);
 
-        return Response.builder()
+        return Response.<User>builder()
                 .status(200)
-//                .data(userToSave)
+                .data(userToSave)
                 .message("User was successfully registered...")
                 .build();
     }

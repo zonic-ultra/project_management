@@ -10,14 +10,14 @@ public class CorsConfig {
 
     @Bean
     public WebMvcConfigurer webMvcConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-                        .allowedOrigins("*")
-                        .allowedHeaders("*");
-            }
+        return new  WebMvcConfigurer() {
+                @Override
+                public void addCorsMappings(CorsRegistry registry) {
+                    registry.addMapping("/api/**")
+                            .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                            .allowedOrigins("*")
+                            .allowedHeaders("*");
+                }
         };
     }
 }

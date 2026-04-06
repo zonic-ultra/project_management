@@ -1,5 +1,6 @@
 package com.dendev.project_management.entity;
 
+import com.dendev.project_management.dto.task.TaskRequestDto;
 import com.dendev.project_management.enums.TaskStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -54,4 +55,10 @@ public class Task {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public void updateTaskStatus(TaskStatus newStatus) {
+        this.taskStatus = newStatus;
+        this.updatedAt = LocalDateTime.now();
+
+    }
 }
