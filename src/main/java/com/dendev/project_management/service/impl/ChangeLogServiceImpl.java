@@ -13,11 +13,13 @@ import com.dendev.project_management.repository.TaskRepository;
 import com.dendev.project_management.service.ChangeLogService;
 import com.dendev.project_management.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChangeLogServiceImpl implements ChangeLogService {

@@ -39,15 +39,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Response<TaskResponseDto> createTask(TaskRequestDto dto) {
-        // 1. Find assigned user
+
         User assignedUser = userRepository.findById(dto.getUser_id())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // 2. Find project
+
         Project project = projectRepository.findById(dto.getProject_id())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
-        // 3. Build and save task
+
         Task task = Task.builder()
                 .task_name(dto.getTask_name())
                 .contents(dto.getContents())

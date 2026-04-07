@@ -22,6 +22,7 @@ public class TaskController {
     private TaskService taskService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<Response<List<TaskResponseDto>>> findAllTasks() {
         return ResponseEntity.ok(taskService.findAllTasks());
     }
