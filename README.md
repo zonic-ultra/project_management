@@ -253,8 +253,5 @@ Each log contains:
 
 **DenDev**
 
----
-
-## 📄 License
 
 MIT License
