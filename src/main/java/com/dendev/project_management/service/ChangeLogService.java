@@ -17,4 +17,6 @@ public interface ChangeLogService {
     Response<List<ChangeLogResponseDto>> getTaskHistory(Long taskId);
 
     Response<List<ChangeLogResponseDto>> getChangeLogs();
+
+    Response<Void> deleteLog(Long id);
 }

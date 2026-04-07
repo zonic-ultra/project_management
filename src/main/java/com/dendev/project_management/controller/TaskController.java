@@ -9,6 +9,7 @@ import com.dendev.project_management.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,25 +27,30 @@ public class TaskController {
     }
 
     @GetMapping("/find_by_id")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<Response<TaskResponseDto>> findTaskById(@RequestParam("id") Long id) {
         return ResponseEntity.ok(taskService.findTask(id));
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<TaskResponseDto>> createTask(@RequestBody @Valid TaskRequestDto taskRequestDto) {
         return ResponseEntity.ok(taskService.createTask(taskRequestDto));
     }
 
     @PutMapping("/update")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<TaskResponseDto>> updateTask(@RequestParam("id") Long id, @RequestBody @Valid TaskRequestDto taskRequestDto) {
         return ResponseEntity.ok(taskService.updateTask(id, taskRequestDto));
     }
     @PatchMapping("/update_status")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<Response<TaskResponseDto>> updateTaskStatus(@RequestParam("id") Long id, @RequestBody TaskRequestDto taskStatus) {
         return ResponseEntity.ok(taskService.updateTaskStatus(id, taskStatus));
     }
 
     @DeleteMapping("/delete")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<Void>> deleteTask(@RequestParam("id") Long id) {
         return ResponseEntity.ok(taskService.deleteTask(id));
     }

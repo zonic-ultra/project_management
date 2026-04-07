@@ -27,17 +27,20 @@ public class ProjectController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<?>> createProject(@RequestBody @Valid ProjectRequestDto projectRequestDto){
         return ResponseEntity.ok(projectService.createProject(projectRequestDto));
     }
 
     @PutMapping("/update")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<ProjectResponseDto>> updateProject(@RequestParam("id") Long id, @RequestBody @Valid ProjectRequestDto projectRequestDto){
         return ResponseEntity.ok(projectService.updateProject(id, projectRequestDto));
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Response<Void>> deleteProject(@RequestParam("id") Long id){
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response<Void>> deleteProject(@RequestParam Long id){
         return ResponseEntity.ok(projectService.deleteProject(id));
     }
 }

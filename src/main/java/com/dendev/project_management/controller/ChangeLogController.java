@@ -5,10 +5,8 @@ import com.dendev.project_management.dto.change_log.ChangeLogResponseDto;
 import com.dendev.project_management.service.ChangeLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,13 +18,21 @@ public class ChangeLogController {
     private ChangeLogService changeLogService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<List<ChangeLogResponseDto>>> getAllChangeLogs() {
         return ResponseEntity.ok(changeLogService.getChangeLogs());
     }
 
     @GetMapping("/get_change_log")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<List<ChangeLogResponseDto>>> getChangeLogs(@RequestParam Long id) {
         return ResponseEntity.ok(changeLogService.getTaskHistory(id));
+    }
+
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response<Void>> log(@RequestParam Long id){
+        return ResponseEntity.ok(changeLogService.deleteLog(id));
     }
 
 }

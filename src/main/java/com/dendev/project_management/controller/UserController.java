@@ -32,6 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/get_member")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<UserResponseDto>> getMember(@Param("id") Long id){
         return ResponseEntity.ok(userService.getMember(id));
     }

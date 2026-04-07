@@ -100,4 +100,17 @@ public class ChangeLogServiceImpl implements ChangeLogService {
                 .build();
     }
 
+    @Override
+    public Response<Void> deleteLog(Long id) {
+        ChangeLog changeLog = changeLogRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Change log not found"));
+
+        changeLogRepository.delete(changeLog);
+
+        return Response.<Void>builder()
+                .status(200)
+                .message("Change log deleted successfully")
+                .build();
+    }
+
 }
