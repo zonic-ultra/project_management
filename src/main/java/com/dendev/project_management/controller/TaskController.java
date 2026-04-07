@@ -1,8 +1,10 @@
 package com.dendev.project_management.controller;
 
 import com.dendev.project_management.dto.Response;
+import com.dendev.project_management.dto.change_log.ChangeLogResponseDto;
 import com.dendev.project_management.dto.task.TaskRequestDto;
 import com.dendev.project_management.dto.task.TaskResponseDto;
+import com.dendev.project_management.enums.TaskStatus;
 import com.dendev.project_management.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,10 @@ public class TaskController {
     @PutMapping("/update")
     public ResponseEntity<Response<TaskResponseDto>> updateTask(@RequestParam("id") Long id, @RequestBody @Valid TaskRequestDto taskRequestDto) {
         return ResponseEntity.ok(taskService.updateTask(id, taskRequestDto));
+    }
+    @PatchMapping("/update_status")
+    public ResponseEntity<Response<TaskResponseDto>> updateTaskStatus(@RequestParam("id") Long id, @RequestBody TaskRequestDto taskStatus) {
+        return ResponseEntity.ok(taskService.updateTaskStatus(id, taskStatus));
     }
 
     @DeleteMapping("/delete")

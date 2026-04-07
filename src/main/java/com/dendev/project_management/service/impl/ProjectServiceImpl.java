@@ -23,11 +23,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Override
     public Response<ProjectResponseDto> createProject(ProjectRequestDto projectRequestDto) {
@@ -89,17 +87,15 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Response<List<ProjectResponseDto>> getProjects() {
+    public Response<?> getProjects() {
         List<Project> projects = projectRepository.findAll();
 
-        List<ProjectResponseDto> list = projects.stream()
-                .map(ProjectResponseDto::new)
-                .toList();
 
-        return Response.<List<ProjectResponseDto>>builder()
+
+        return Response.builder()
                 .status(200)
                 .message("Success")
-                .data(list)
+                .data(projects)
                 .build();
     }
 }

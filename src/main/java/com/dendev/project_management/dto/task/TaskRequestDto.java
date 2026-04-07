@@ -29,4 +29,6 @@ public class TaskRequestDto {
 
     @NotNull
     private Long project_id;
+
+    private String remarks;
 }

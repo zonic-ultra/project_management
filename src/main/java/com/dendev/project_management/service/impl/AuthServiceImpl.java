@@ -9,6 +9,7 @@ import com.dendev.project_management.exceptions.BadRequestException;
 import com.dendev.project_management.repository.UserRepository;
 import com.dendev.project_management.security.JwtUtils;
 import com.dendev.project_management.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,15 +20,14 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private JwtUtils jwtUtils;
+    private final PasswordEncoder passwordEncoder;
+
+    private final JwtUtils jwtUtils;
 
     @Override
     public Response<User> signUp(RegisterRequest registerRequest) {

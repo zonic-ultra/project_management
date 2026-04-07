@@ -1,6 +1,7 @@
 package com.dendev.project_management.service.impl;
 
 import com.dendev.project_management.dto.Response;
+import com.dendev.project_management.dto.change_log.ChangeLogDto;
 import com.dendev.project_management.dto.change_log.ChangeLogResponseDto;
 import com.dendev.project_management.entity.ChangeLog;
 import com.dendev.project_management.entity.Task;
@@ -8,77 +9,95 @@ import com.dendev.project_management.entity.User;
 import com.dendev.project_management.enums.TaskStatus;
 import com.dendev.project_management.exceptions.ResourceNotFoundException;
 import com.dendev.project_management.repository.ChangeLogRepository;
-import com.dendev.project_management.repository.UserRepository;
+import com.dendev.project_management.repository.TaskRepository;
 import com.dendev.project_management.service.ChangeLogService;
+import com.dendev.project_management.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ChangeLogServiceImpl implements ChangeLogService {
 
-    private ChangeLogRepository changeLogRepository;
-    private UserRepository userRepository;
+    private final ChangeLogRepository changeLogRepository;
+    private final UserService userService;
+    private final TaskRepository taskRepository;
 
     @Override
-    public Response<Void> logChange(Task task, String username, ChangeLog changeLog) {
-        User changedBy = userRepository.findByUsername(username)
-                .orElseThrow(()->new ResourceNotFoundException("User not found"));
+    @Transactional
+    public Response<ChangeLogResponseDto> createChangeLog(ChangeLogDto dto) {
+        Task task = taskRepository.findById(dto.getTaskId())
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
-        ChangeLog log = new ChangeLog();
-        log.setChangedBy(changedBy);
-        log.setAction(changeLog.getAction());
-        log.setOld_status(changeLog.getOld_status());
-        log.setNew_status(changeLog.getNew_status());
-        log.setRemarks(changeLog.getRemarks());
-        log.setChangedAt(changeLog.getChangedAt());
+        User changedBy = userService.getCurrentUser();
 
-        changeLogRepository.save(log);
+        ChangeLog log = ChangeLog.builder()
+                .task(task)
+                .changedBy(changedBy)
+                .action("STATUS_CHANGED")
+                .new_status(dto.getNewStatus())
+                .remarks(dto.getRemarks())
+                .build();
 
-        return Response.<Void>builder()
+        ChangeLog savedLog = changeLogRepository.save(log);
+
+        return Response.<ChangeLogResponseDto>builder()
                 .status(200)
-                .message("Changed Successfully")
+                .message("Change log created successfully")
+                .data(new ChangeLogResponseDto(savedLog))
                 .build();
     }
 
     @Override
-    public Response<ChangeLog> findById(Long id) {
-        return null;
-    }
+    public void logStatusChange(Long taskId, TaskStatus newStatus, String remarks) {
 
-    @Override
-    public Response<Void> logStatusChange(Task task, String username, TaskStatus oldStatus, TaskStatus newStatus, String remark) {
-        User changedBy = userRepository.findByUsername(username)
-                .orElseThrow(()->new ResourceNotFoundException("User not found"));
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
-        ChangeLog log = new ChangeLog();
-        log.setChangedBy(changedBy);
-        log.setAction("STATUS_CHANGE");
-        log.setOld_status(oldStatus !=null ? oldStatus.name() : null);
-        log.setNew_status(newStatus.name());
-        log.setRemarks(remark);
-//        log.setChangedAt(changeLog.getChangedAt());
+        User changedBy = userService.getCurrentUser();
+
+        ChangeLog log = ChangeLog.builder()
+                .task(task)
+                .changedBy(changedBy)
+                .action("STATUS_CHANGED")
+                .new_status(newStatus)
+                .remarks(remarks)
+                .build();
 
         changeLogRepository.save(log);
-
-        return Response.<Void>builder()
-                .status(200)
-                .message("Changed Successfully")
-                .build();
     }
 
     @Override
-    public Response<List<ChangeLogResponseDto>> getTaskHistory() {
-        List<ChangeLog> list = changeLogRepository.findAll();
+    public Response<List<ChangeLogResponseDto>> getTaskHistory(Long taskId) {
+        List<ChangeLog> logs = changeLogRepository.findByTaskIdOrderByChangedAtDesc(taskId);
 
-        List<ChangeLogResponseDto> changeLogResponseDtoList = list.stream()
-                .map(ChangeLogResponseDto::new).toList();
+        List<ChangeLogResponseDto> list = logs.stream()
+                .map(ChangeLogResponseDto::new)
+                .toList();
 
         return Response.<List<ChangeLogResponseDto>>builder()
                 .status(200)
-                .message("Success")
-                .data(changeLogResponseDtoList)
+                .message("Task history retrieved successfully")
+                .data(list)
                 .build();
     }
+
+    @Override
+    public Response<List<ChangeLogResponseDto>> getChangeLogs() {
+        List<ChangeLog> logs = changeLogRepository.findAllByOrderByChangedAtDesc();
+
+        List<ChangeLogResponseDto> dtoList = logs.stream()
+                .map(ChangeLogResponseDto::new)
+                .toList();
+
+        return Response.<List<ChangeLogResponseDto>>builder()
+                .status(200)
+                .message("All change logs retrieved successfully")
+                .data(dtoList)
+                .build();
+    }
+
 }

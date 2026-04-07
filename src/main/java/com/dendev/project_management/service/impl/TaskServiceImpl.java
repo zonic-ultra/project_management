@@ -1,9 +1,11 @@
 package com.dendev.project_management.service.impl;
 
 import com.dendev.project_management.dto.Response;
+import com.dendev.project_management.dto.change_log.ChangeLogDto;
 import com.dendev.project_management.dto.change_log.ChangeLogResponseDto;
 import com.dendev.project_management.dto.task.TaskRequestDto;
 import com.dendev.project_management.dto.task.TaskResponseDto;
+import com.dendev.project_management.entity.ChangeLog;
 import com.dendev.project_management.entity.Project;
 import com.dendev.project_management.entity.Task;
 import com.dendev.project_management.entity.User;
@@ -18,174 +20,168 @@ import com.dendev.project_management.service.TaskService;
 import com.dendev.project_management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
-    @Autowired
-    private TaskRepository taskRepository;
-
-    @Autowired
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ChangeLogService changeLogService;
+    private final TaskRepository taskRepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
+    private final ChangeLogService changeLogService;
 
     @Override
-    public Response<TaskResponseDto> createTask(TaskRequestDto taskRequestDto) {
-        User user = userRepository.findById(taskRequestDto.getUser_id())
-                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
+    @Transactional
+    public Response<TaskResponseDto> createTask(TaskRequestDto dto) {
+        // 1. Find assigned user
+        User assignedUser = userRepository.findById(dto.getUser_id())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Project project = projectRepository.findById(taskRequestDto.getProject_id())
-                .orElseThrow(()-> new ResourceNotFoundException("Project not found"));
+        // 2. Find project
+        Project project = projectRepository.findById(dto.getProject_id())
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
+        // 3. Build and save task
         Task task = Task.builder()
-                .task_name(taskRequestDto.getTask_name())
-                .contents(taskRequestDto.getContents())
-                .taskStatus(taskRequestDto.getTaskStatus())
-                .dueDate(taskRequestDto.getDueDate())
+                .task_name(dto.getTask_name())
+                .contents(dto.getContents())
+                .taskStatus(dto.getTaskStatus() != null ? dto.getTaskStatus() : TaskStatus.TODO)
+                .dueDate(dto.getDueDate())
                 .project(project)
-                .assignedUser(user)
+                .assignedUser(assignedUser)
                 .build();
 
-        Task taskToSave =  taskRepository.save(task);
+        Task savedTask = taskRepository.save(task);
 
-        TaskResponseDto responseDto = new TaskResponseDto(taskToSave);
+        changeLogService.logStatusChange(savedTask.getId(), dto.getTaskStatus(), "Task created successfully");
 
         return Response.<TaskResponseDto>builder()
                 .status(200)
-                .message("Task created")
-                .data(responseDto)
+                .message("Task created successfully")
+                .data(new TaskResponseDto(savedTask))
                 .build();
     }
 
     @Override
-    public Response<TaskResponseDto> updateTask(Long id, TaskRequestDto taskRequestDto) {
+    @Transactional
+    public Response<TaskResponseDto> updateTask(Long id, TaskRequestDto dto) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
-        Project project = projectRepository.findById(taskRequestDto.getProject_id())
-                .orElseThrow(()-> new ResourceNotFoundException("Project not found"));
-
-        User user = userRepository.findById(taskRequestDto.getProject_id())
-                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
-
-
-        if (task.getProject() != null) {
+        if (dto.getProject_id() != null) {
+            Project project = projectRepository.findById(dto.getProject_id())
+                    .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
             task.setProject(project);
         }
-        if (task.getAssignedUser() != null) {
+
+        if (dto.getUser_id() != null) {
+            User user = userRepository.findById(dto.getUser_id())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
             task.setAssignedUser(user);
         }
-        if (task.getTask_name() != null) {
-            task.setTask_name(taskRequestDto.getTask_name());
-        }
-        if (task.getContents() != null) {
-            task.setContents(taskRequestDto.getContents());
-        }
-        if (task.getTaskStatus() != null) {
-            task.setTaskStatus(taskRequestDto.getTaskStatus());
-        }
-        if (task.getDueDate() != null) {
-            task.setDueDate(taskRequestDto.getDueDate());
-        }
 
-        Task taskToSave =  taskRepository.save(task);
+        if (dto.getTask_name() != null) task.setTask_name(dto.getTask_name());
+        if (dto.getContents() != null) task.setContents(dto.getContents());
+        if (dto.getTaskStatus() != null) task.setTaskStatus(dto.getTaskStatus());
+        if (dto.getDueDate() != null) task.setDueDate(dto.getDueDate());
 
-        TaskResponseDto responseDto = new TaskResponseDto(taskToSave);
+        Task updatedTask = taskRepository.save(task);
+
+        changeLogService.logStatusChange(updatedTask.getId(), updatedTask.getTaskStatus(), "Task updated successfully");
+
 
         return Response.<TaskResponseDto>builder()
                 .status(200)
-                .message("Task updated")
-                .data(responseDto)
+                .message("Task updated successfully")
+                .data(new TaskResponseDto(updatedTask))
                 .build();
-
-
     }
 
     @Override
+    @Transactional
     public Response<Void> deleteTask(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
         taskRepository.delete(task);
 
         return Response.<Void>builder()
                 .status(200)
-                .message("Task deleted")
+                .message("Task deleted successfully")
                 .build();
     }
 
     @Override
     public Response<TaskResponseDto> findTask(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Task not found"));
-
-        TaskResponseDto responseDto = new TaskResponseDto(task);
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
         return Response.<TaskResponseDto>builder()
                 .status(200)
                 .message("Task found")
-                .data(responseDto)
+                .data(new TaskResponseDto(task))
                 .build();
     }
 
     @Override
     public Response<List<TaskResponseDto>> findAllTasks() {
-
         User currentUser = userService.getCurrentUser();
-
         List<Task> taskList;
 
         if (currentUser.getRole() == Role.ADMIN) {
             taskList = taskRepository.findAll();
-        }else{
+        } else {
             taskList = taskRepository.findByAssignedUser(currentUser);
         }
 
-        List<TaskResponseDto> list =taskList.stream()
+        List<TaskResponseDto> dtoList = taskList.stream()
                 .map(TaskResponseDto::new)
                 .toList();
 
         return Response.<List<TaskResponseDto>>builder()
                 .status(200)
-                .message("Tasks found")
-                .data(list)
+                .message("Tasks retrieved successfully")
+                .data(dtoList)
                 .build();
     }
 
     @Override
-    public Response<TaskResponseDto> updateTaskStatus(Long id,String username, TaskRequestDto taskRequestDto, String remark) {
+    @Transactional
+    public Response<TaskResponseDto> updateTaskStatus(Long id, TaskRequestDto taskRequestDto) {
+
         Task task = taskRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
+        TaskStatus newStatus = taskRequestDto.getTaskStatus();
 
-
-        TaskStatus oldStatus = taskRequestDto.getTaskStatus();
-        task.updateTaskStatus(taskRequestDto.getTaskStatus());
+        task.setTaskStatus(newStatus);
 
         Task updatedTask = taskRepository.save(task);
 
-        TaskResponseDto responseDto = new TaskResponseDto(updatedTask);
 
-        changeLogService.logStatusChange(updatedTask,username,oldStatus,taskRequestDto.getTaskStatus(),remark);
+        changeLogService.logStatusChange(
+                updatedTask.getId(),
+                newStatus,
+                taskRequestDto.getRemarks()
+        );
 
+
+        TaskResponseDto responseDto = new TaskResponseDto();
+        responseDto.setId(updatedTask.getId());
+        responseDto.setTaskStatus(updatedTask.getTaskStatus());
 
         return Response.<TaskResponseDto>builder()
                 .status(200)
-                .message("Task status updated")
+                .message("Task status updated successfully")
                 .data(responseDto)
                 .build();
     }
 }
+
+
