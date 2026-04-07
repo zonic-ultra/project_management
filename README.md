@@ -252,7 +252,4 @@ Each log contains:
 
 ## 👨‍💻 Author
 
-**DenDev**
-
-
-MIT License
+Judens Bandal 
