@@ -10,6 +10,6 @@ import java.util.List;
 public interface ProjectService {
     Response<ProjectResponseDto> updateProject(Long id, ProjectRequestDto projectRequestDto);
     Response<Void> deleteProject(Long id);
-    Response<List<ProjectResponseDto>> getProjects();
+    Response<?> getProjects();
     Response<ProjectResponseDto> createProject(ProjectRequestDto projectRequestDto);
 }

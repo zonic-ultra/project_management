@@ -22,7 +22,7 @@ public class ProjectController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<List<ProjectResponseDto>>>  getAllProjects() {
+    public ResponseEntity<Response<?>>  getAllProjects() {
         return ResponseEntity.ok(projectService.getProjects());
     }
 

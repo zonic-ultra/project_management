@@ -1,5 +1,6 @@
 package com.dendev.project_management.entity;
 
+import com.dendev.project_management.enums.TaskStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,8 +38,8 @@ public class ChangeLog {
 
     private String action;
 
-    private String old_status;
-    private String new_status;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus new_status;
 
     @Column(length = 500)
     private String remarks;

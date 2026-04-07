@@ -1,7 +1,8 @@
 package com.dendev.project_management.entity;
 
-import com.dendev.project_management.dto.task.TaskRequestDto;
+
 import com.dendev.project_management.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -15,6 +16,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -56,9 +59,7 @@ public class Task {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public void updateTaskStatus(TaskStatus newStatus) {
-        this.taskStatus = newStatus;
-        this.updatedAt = LocalDateTime.now();
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChangeLog> changeLogs = new ArrayList<>();
 
-    }
 }
