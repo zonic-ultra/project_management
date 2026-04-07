@@ -42,6 +42,7 @@ This system enforces **role-based access control (RBAC)** and tracks all task ac
 * Track all task changes automatically
 * View all logs (ADMIN)
 * View task-specific logs (ADMIN)
+* Delete log (ADMIN)
 
 ---
 
