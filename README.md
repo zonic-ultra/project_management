@@ -281,5 +281,3 @@ Authorization: Bearer <token>
 Judens Bandal (DenDev)
 
 ---
-
-MIT License
