@@ -46,7 +46,7 @@ public class TaskController {
     }
     @PatchMapping("/update_status")
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<Response<TaskResponseDto>> updateTaskStatus(@RequestParam("id") Long id, @RequestBody TaskRequestDto taskStatus) {
+    public ResponseEntity<Response<TaskResponseDto>> updateTaskStatus(@RequestParam("id") Long id, @RequestBody @Valid TaskRequestDto taskStatus) {
         return ResponseEntity.ok(taskService.updateTaskStatus(id, taskStatus));
     }
 
