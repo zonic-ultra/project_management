@@ -25,13 +25,13 @@ public class ChangeLogController {
 
     @GetMapping("/get_change_log")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<List<ChangeLogResponseDto>>> getChangeLogs(@RequestParam Long id) {
+    public ResponseEntity<Response<List<ChangeLogResponseDto>>> getChangeLogs(@RequestParam("id") Long id) {
         return ResponseEntity.ok(changeLogService.getTaskHistory(id));
     }
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<Void>> log(@RequestParam Long id){
+    public ResponseEntity<Response<Void>> log(@RequestParam("id") Long id){
         return ResponseEntity.ok(changeLogService.deleteLog(id));
     }
 

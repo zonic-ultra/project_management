@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -153,30 +154,83 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Response<TaskResponseDto> updateTaskStatus(Long id, TaskRequestDto taskRequestDto) {
+    public Response<ChangeLogResponseDto> updateTaskStatus(Long id, ChangeLogDto changeLogDto) {
+
+//        Task task = taskRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+//
+//        task.getTaskStatus()
+//        TaskStatus newStatus = changeLogDto.getNewStatus();
+//
+//        task.setTaskStatus(newStatus);
+//
+//        Task updatedTask = taskRepository.save(task);
+
+//        // 1. Find the task
+//        Task task = taskRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+//
+//        // 2. Store old status before updating
+//        TaskStatus oldStatus = task.getTaskStatus();
+//
+//        // 3. Get new status from DTO
+//        TaskStatus newStatus = changeLogDto.getNewStatus();
+//
+//        if (newStatus == null) {
+//            throw new IllegalArgumentException("New status is required");
+//        }
+//
+//        // 4. Update task status
+//        task.setTaskStatus(newStatus);
+//        Task updatedTask = taskRepository.save(task);
+//
+//        // 6. Log the status change
+//        changeLogService.logStatusChange(
+//                updatedTask.getId(),
+//                newStatus,
+//                changeLogDto.getRemarks()
+//        );
+//
+//
+//
+//        ChangeLogResponseDto responseDto = new ChangeLogResponseDto();
+//        responseDto.setId(updatedTask.getId());
+//        responseDto.setNewStatus(updatedTask.getTaskStatus());
+//
+//        return Response.<ChangeLogResponseDto>builder()
+//                .status(200)
+//                .message("Task status updated successfully")
+//                .data(responseDto)
+//                .build();
 
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
-        TaskStatus newStatus = taskRequestDto.getTaskStatus();
+        TaskStatus newStatus = changeLogDto.getNewStatus();
 
+        if (newStatus == null) {
+            throw new IllegalArgumentException("New status is required");
+        }
+
+        // Update task status
         task.setTaskStatus(newStatus);
-
         Task updatedTask = taskRepository.save(task);
 
+        // Get current user
+        User currentUser = userService.getCurrentUser();
 
-        changeLogService.logStatusChange(
-                updatedTask.getId(),
-                newStatus,
-                taskRequestDto.getRemarks()
-        );
+        // Log the change
+        changeLogService.logStatusChange(updatedTask.getId(), newStatus, changeLogDto.getRemarks());
 
+        // Create simple response
+        ChangeLogResponseDto responseDto = new ChangeLogResponseDto();
+        responseDto.setTaskId(updatedTask.getId());
+        responseDto.setUsername(currentUser.getUsername());
+        responseDto.setNewStatus(newStatus);
+        responseDto.setRemarks(changeLogDto.getRemarks());
+        responseDto.setChangedAt(LocalDateTime.now());
 
-        TaskResponseDto responseDto = new TaskResponseDto();
-        responseDto.setId(updatedTask.getId());
-        responseDto.setTaskStatus(updatedTask.getTaskStatus());
-
-        return Response.<TaskResponseDto>builder()
+        return Response.<ChangeLogResponseDto>builder()
                 .status(200)
                 .message("Task status updated successfully")
                 .data(responseDto)

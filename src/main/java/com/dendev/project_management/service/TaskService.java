@@ -1,6 +1,7 @@
 package com.dendev.project_management.service;
 
 import com.dendev.project_management.dto.Response;
+import com.dendev.project_management.dto.change_log.ChangeLogDto;
 import com.dendev.project_management.dto.change_log.ChangeLogResponseDto;
 import com.dendev.project_management.dto.task.TaskRequestDto;
 import com.dendev.project_management.dto.task.TaskResponseDto;
@@ -14,5 +15,5 @@ public interface TaskService {
     Response<Void> deleteTask(Long id);
     Response<TaskResponseDto> findTask(Long id);
     Response<List<TaskResponseDto>> findAllTasks();
-    Response<TaskResponseDto> updateTaskStatus(Long id, TaskRequestDto taskRequestDto);
+    Response<ChangeLogResponseDto> updateTaskStatus(Long id, ChangeLogDto changeLogDto);
 }
