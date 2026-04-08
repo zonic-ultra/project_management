@@ -70,32 +70,6 @@ public class UserServiceImpl implements UserService {
     public Response<UserResponseDto> updateMember(Long id, UserDto userDto) {
         User existingUser = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!"));
 
-//        if (existingUserToUpdate.getUsername()!= null) {
-//            existingUserToUpdate.setUsername(userDto.getUsername());
-//        }
-//
-//        if (userDto.getPassword() != null && userDto.getPassword().isBlank()){
-//            existingUserToUpdate.setPassword(passwordEncoder.encode(userDto.getPassword()));
-//        }
-//
-//        if (userDto.getName() != null) {
-//            existingUserToUpdate.setName(userDto.getName());
-//        }
-//
-//        if (userDto.getRole() != null){
-//            existingUserToUpdate.setRole(userDto.getRole());
-//        }
-//
-//        userRepository.save(existingUserToUpdate);
-//
-//        UserResponseDto userResponseDto = new UserResponseDto(existingUserToUpdate);
-//
-//        return Response.<UserResponseDto>builder()
-//                .status(200)
-//                .message("User updated successfully")
-//                .data(userResponseDto)
-//                .build();
-
         // Update fields only if they are provided (not null and not blank)
         if (userDto.getUsername() != null && !userDto.getUsername().isBlank()) {
 
