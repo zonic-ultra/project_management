@@ -34,7 +34,7 @@ public class ChangeLog {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime changedAt =  LocalDateTime.now();
+    private LocalDateTime changedAt;
 
     private String action;
 
