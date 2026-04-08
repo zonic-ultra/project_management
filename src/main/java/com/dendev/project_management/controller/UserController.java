@@ -1,6 +1,8 @@
 package com.dendev.project_management.controller;
 
 import com.dendev.project_management.dto.Response;
+import com.dendev.project_management.dto.user.ChangePasswordRequest;
+import com.dendev.project_management.dto.user.UserDto;
 import com.dendev.project_management.dto.user.UserResponseDto;
 import com.dendev.project_management.entity.User;
 import com.dendev.project_management.service.UserService;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 
@@ -21,6 +24,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/current")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<User> getCurrentUser() {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
@@ -33,7 +37,7 @@ public class UserController {
 
     @GetMapping("/get_member")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<UserResponseDto>> getMember(@Param("id") Long id){
+    public ResponseEntity<Response<UserResponseDto>> getMember(@RequestParam("id") Long id){
         return ResponseEntity.ok(userService.getMember(id));
     }
 
@@ -43,5 +47,15 @@ public class UserController {
         return ResponseEntity.ok(userService.deleteMember(id));
     }
 
+    @PutMapping("/update_member")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Response<UserResponseDto>> update(@RequestParam("id") Long id, @RequestBody UserDto userDto){
+        return ResponseEntity.ok(userService.updateMember(id, userDto));
+    }
 
+    @PatchMapping("/change_password")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Response<UserResponseDto>> changePassword(@RequestBody ChangePasswordRequest request, Principal connectedUser){
+        return ResponseEntity.ok(userService.changePassword(request,connectedUser));
+    }
 }

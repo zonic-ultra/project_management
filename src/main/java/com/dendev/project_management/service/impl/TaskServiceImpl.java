@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -153,30 +154,32 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Response<TaskResponseDto> updateTaskStatus(Long id, TaskRequestDto taskRequestDto) {
-
+    public Response<ChangeLogResponseDto> updateTaskStatus(Long id, ChangeLogDto changeLogDto) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
-        TaskStatus newStatus = taskRequestDto.getTaskStatus();
+        TaskStatus newStatus = changeLogDto.getNewStatus();
+
+        if (newStatus == null) {
+            throw new IllegalArgumentException("New status is required");
+        }
 
         task.setTaskStatus(newStatus);
-
         Task updatedTask = taskRepository.save(task);
 
-
-        changeLogService.logStatusChange(
-                updatedTask.getId(),
-                newStatus,
-                taskRequestDto.getRemarks()
-        );
+        User currentUser = userService.getCurrentUser();
 
 
-        TaskResponseDto responseDto = new TaskResponseDto();
-        responseDto.setId(updatedTask.getId());
-        responseDto.setTaskStatus(updatedTask.getTaskStatus());
+        changeLogService.logStatusChange(updatedTask.getId(), newStatus, changeLogDto.getRemarks());
 
-        return Response.<TaskResponseDto>builder()
+        ChangeLogResponseDto responseDto = new ChangeLogResponseDto();
+        responseDto.setTaskId(updatedTask.getId());
+        responseDto.setUsername(currentUser.getUsername());
+        responseDto.setNewStatus(newStatus);
+        responseDto.setRemarks(changeLogDto.getRemarks());
+        responseDto.setChangedAt(LocalDateTime.now());
+
+        return Response.<ChangeLogResponseDto>builder()
                 .status(200)
                 .message("Task status updated successfully")
                 .data(responseDto)

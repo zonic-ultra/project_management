@@ -40,7 +40,7 @@ public class ProjectController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<Void>> deleteProject(@RequestParam Long id){
+    public ResponseEntity<Response<Void>> deleteProject(@RequestParam("id") Long id){
         return ResponseEntity.ok(projectService.deleteProject(id));
     }
 }
