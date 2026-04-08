@@ -1,8 +1,8 @@
 # 📌 Project Management System API
 
-A secure and scalable RESTful API for managing **users, projects, tasks, and change logs**, built using **Java 21**, **Spring Boot**, **Spring Security (JWT)**, and **PostgreSQL**.
+A secure and scalable REST API for managing **users, projects, tasks, and change logs**, built with **Java 21**, **Spring Boot**, **Spring Security (JWT)**, and **PostgreSQL**.
 
-This system enforces **role-based access control (RBAC)** and tracks all task activity through **change logs (audit trail)**.
+The system enforces **role-based access control (RBAC)** and provides a full **audit trail** for task changes.
 
 ---
 
@@ -10,39 +10,59 @@ This system enforces **role-based access control (RBAC)** and tracks all task ac
 
 ### 🔐 Authentication
 
-* User registration
-* JWT-based login
+* User registration & login (JWT)
 * Secure password encryption
+* Token-based authorization
+
+---
 
 ### 👥 User Management
 
 * Get current authenticated user
-* Get all users (ADMIN only)
-* Get user by ID (ADMIN only)
-* Delete user (ADMIN only)
+* Update user profile (authenticated users)
+* Change password (authenticated users)
+* Admin-only:
 
-### 📁 Project Management
+  * View all users
+  * Get user by ID
+  * Delete user
 
-* Create project (ADMIN)
-* Update project (ADMIN)
-* Delete project (ADMIN)
-* View all projects (ADMIN)
+---
+
+### 📁 Project Management (ADMIN)
+
+* Create project
+* Update project
+* Delete project
+* View all projects
+
+---
 
 ### ✅ Task Management
 
-* Create, update, delete tasks (ADMIN)
-* View tasks:
+* ADMIN:
 
-  * ADMIN → all tasks
-  * USER → assigned tasks only
-* Update task status (ADMIN & USER)
+  * Create, update, delete tasks
+  * View all tasks
+* USER:
+
+  * View assigned tasks
+  * Update task status
+* Shared:
+
+  * Get task by ID (with access validation)
+
+---
 
 ### 📝 Change Logs
 
-* Track all task changes automatically
-* View all logs (ADMIN)
-* View task-specific logs (ADMIN)
-* Delete log (ADMIN)
+* Automatically created when task status changes
+* Includes remarks and status updates
+* ADMIN can:
+
+  * View all logs
+  * View logs per task
+  * Delete logs
 
 ---
 
@@ -58,20 +78,20 @@ This system enforces **role-based access control (RBAC)** and tracks all task ac
 
 ---
 
-## ⚙️ Setup Guide
+## ⚙️ Setup
 
-### 1. Clone the Repository
+### 1. Clone Repository
 
-```bash
+```bash id="clone1"
 git clone https://github.com/your-username/project-management.git
 cd project-management
 ```
 
 ---
 
-### 2. Configure Application Properties
+### 2. Configure Environment
 
-```properties
+```properties id="config1"
 spring.datasource.url=YOUR_DB_URL
 spring.datasource.username=YOUR_DB_USERNAME
 spring.datasource.password=YOUR_DB_PASSWORD
@@ -81,9 +101,9 @@ secretJwtString=YOUR_SECRET_KEY
 
 ---
 
-### 3. Run the Application
+### 3. Run Application
 
-```bash
+```bash id="run1"
 mvn spring-boot:run
 ```
 
@@ -91,7 +111,7 @@ mvn spring-boot:run
 
 ### 4. Base URL
 
-```
+```id="base1"
 http://localhost:8082
 ```
 
@@ -111,10 +131,10 @@ POST /api/auth/register
 POST /api/auth/login
 ```
 
-### Authorization Header
+### Header
 
 ```
-Authorization: Bearer <your_token>
+Authorization: Bearer <token>
 ```
 
 ---
@@ -134,12 +154,14 @@ Authorization: Bearer <your_token>
 
 ### 👤 Users (`/api/users`)
 
-| Method | Endpoint               | Description      | Access      |
-| ------ | ---------------------- | ---------------- | ----------- |
-| GET    | /current               | Get current user | ADMIN, USER |
-| GET    | /get_all_member        | Get all users    | ADMIN       |
-| GET    | /get_member?id={id}    | Get user by ID   | ADMIN       |
-| DELETE | /delete_member?id={id} | Delete user      | ADMIN       |
+| Method | Endpoint               | Description         | Access        |
+| ------ | ---------------------- | ------------------- | ------------- |
+| GET    | /current               | Get current user    | Authenticated |
+| GET    | /get_all_member        | Get all users       | ADMIN         |
+| GET    | /get_member?id={id}    | Get user by ID      | ADMIN         |
+| PUT    | /update_member?id={id} | Update user profile | Authenticated |
+| PATCH  | /change_password       | Change password     | Authenticated |
+| DELETE | /delete_member?id={id} | Delete user         | ADMIN         |
 
 ---
 
@@ -159,10 +181,10 @@ Authorization: Bearer <your_token>
 | Method | Endpoint               | Description                                   | Access      |
 | ------ | ---------------------- | --------------------------------------------- | ----------- |
 | GET    | /                      | Get tasks (ADMIN = all, USER = assigned only) | ADMIN, USER |
-| GET    | /find_by_id?id={id}    | Get task by ID                                | ADMIN       |
+| GET    | /find_by_id?id={id}    | Get task by ID                                | ADMIN, USER |
 | POST   | /create                | Create task                                   | ADMIN       |
 | PUT    | /update?id={id}        | Update task                                   | ADMIN       |
-| PATCH  | /update_status?id={id} | Update task status                            | ADMIN, USER |
+| PATCH  | /update_status?id={id} | Update task status (with remarks)             | ADMIN, USER |
 | DELETE | /delete?id={id}        | Delete task                                   | ADMIN       |
 
 ---
@@ -173,83 +195,93 @@ Authorization: Bearer <your_token>
 | ------ | --------------------------- | ---------------- | ------ |
 | GET    | /                           | Get all logs     | ADMIN  |
 | GET    | /get_change_log?id={taskId} | Get task history | ADMIN  |
+| DELETE | /delete?id={id}             | Delete log       | ADMIN  |
 
 ---
 
 ## 🧠 Business Rules
 
-### 🔐 Role-Based Access
+### 🔐 Roles
 
 #### 👑 ADMIN
 
-* Full access to all modules
-* Can manage users, projects, and tasks
-* Can view all change logs
+* Full system access
+* Manages users, projects, tasks, and logs
 
 #### 👤 USER
 
-* Can only view tasks assigned to them
+* Can view assigned tasks only
 * Can update task status
+* Can update profile & change password
 
 ---
 
-### 🔄 Task Behavior
+### 🔄 Task & Change Log Behavior
 
-* Default status: `TODO`
-* Status can be updated by both ADMIN and USER
-* Every status update automatically creates a **change log**
+* Default task status: `TODO`
+* Updating status requires:
 
----
+  * New status
+  * Optional remark
+* Every update:
 
-### 📝 Change Logs
+  * Creates a **ChangeLog record**
+  * Stores:
 
-Each log contains:
-
-* Task reference
-* Updated status
-* User who made the change
-* Optional remarks
-* Timestamp
+    * user
+    * status
+    * remark
+    * timestamp
 
 ---
 
 ## 🔒 Security
 
-* JWT-based authentication
+* JWT Authentication
 * Password encryption using `PasswordEncoder`
-* Method-level security using:
+* Method-level authorization:
 
-```java
+```java id="sec1"
 @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+```
+
+```java id="sec2"
+@PreAuthorize("isAuthenticated()")
 ```
 
 ---
 
 ## ⚠️ Notes
 
-* API uses `@RequestParam` instead of RESTful path variables:
+* Uses `@RequestParam` instead of RESTful path variables:
 
 ```
 /api/tasks/update?id=1
 ```
 
-* Change logs are restricted to ADMIN only
+* Ensure JWT token is included in all secured endpoints
 
-* Always include JWT token for protected endpoints
+* Access control is enforced at method level
 
 ---
 
 ## 📦 Future Improvements
 
-* Convert endpoints to RESTful format (`/tasks/{id}`)
+* Convert endpoints to RESTful (`/tasks/{id}`)
 * Add pagination & filtering
-* Improve validation handling
-* Add unit and integration tests
-* Dockerize application
-* CI/CD pipeline setup
+* Global exception handling
+* Unit & integration testing
+* Docker & CI/CD
+* Role hierarchy improvements
 
 ---
 
 ## 👨‍💻 Author
 
-Judens Bandal 
+**DenDev**
+
+---
+
+## 📄 License
+
+MIT License
