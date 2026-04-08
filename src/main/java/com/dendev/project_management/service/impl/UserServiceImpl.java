@@ -3,6 +3,7 @@ package com.dendev.project_management.service.impl;
 import com.dendev.project_management.dto.Response;
 import com.dendev.project_management.dto.auth.LoginRequest;
 import com.dendev.project_management.dto.auth.RegisterRequest;
+import com.dendev.project_management.dto.user.ChangePasswordRequest;
 import com.dendev.project_management.dto.user.UserDto;
 import com.dendev.project_management.dto.user.UserResponseDto;
 import com.dendev.project_management.entity.User;
@@ -10,18 +11,21 @@ import com.dendev.project_management.enums.Role;
 import com.dendev.project_management.exceptions.BadRequestException;
 import com.dendev.project_management.exceptions.ResourceNotFoundException;
 import com.dendev.project_management.repository.UserRepository;
+import com.dendev.project_management.security.AuthUser;
 import com.dendev.project_management.security.JwtUtils;
 import com.dendev.project_management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,31 +68,96 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response<UserResponseDto> updateMember(Long id, UserDto userDto) {
-        User existingUserToUpdate = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!"));
+        User existingUser = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!"));
 
-        if (existingUserToUpdate.getUsername()!= null) {
-            existingUserToUpdate.setUsername(userDto.getUsername());
+//        if (existingUserToUpdate.getUsername()!= null) {
+//            existingUserToUpdate.setUsername(userDto.getUsername());
+//        }
+//
+//        if (userDto.getPassword() != null && userDto.getPassword().isBlank()){
+//            existingUserToUpdate.setPassword(passwordEncoder.encode(userDto.getPassword()));
+//        }
+//
+//        if (userDto.getName() != null) {
+//            existingUserToUpdate.setName(userDto.getName());
+//        }
+//
+//        if (userDto.getRole() != null){
+//            existingUserToUpdate.setRole(userDto.getRole());
+//        }
+//
+//        userRepository.save(existingUserToUpdate);
+//
+//        UserResponseDto userResponseDto = new UserResponseDto(existingUserToUpdate);
+//
+//        return Response.<UserResponseDto>builder()
+//                .status(200)
+//                .message("User updated successfully")
+//                .data(userResponseDto)
+//                .build();
+
+        // Update fields only if they are provided (not null and not blank)
+        if (userDto.getUsername() != null && !userDto.getUsername().isBlank()) {
+
+            // Check if username is already taken by another user
+            boolean usernameTaken = userRepository.existsByUsernameAndIdNot(userDto.getUsername(), id);
+            if (usernameTaken) {
+                throw new BadRequestException("Username already taken");
+            }
+            existingUser.setUsername(userDto.getUsername());
         }
 
-        if (userDto.getPassword() != null && userDto.getPassword().isEmpty()){
-            existingUserToUpdate.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        if (userDto.getName() != null && !userDto.getName().isBlank()) {
+            existingUser.setName(userDto.getName());
         }
 
-        if (userDto.getName() != null) {
-            existingUserToUpdate.setName(userDto.getName());
+        if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
+            existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
 
-        if (userDto.getRole() != null){
-            existingUserToUpdate.setRole(userDto.getRole());
-        }
+        userRepository.save(existingUser);
 
-        userRepository.save(existingUserToUpdate);
-
-        UserResponseDto userResponseDto = new UserResponseDto(existingUserToUpdate);
+        UserResponseDto responseDto = new UserResponseDto(existingUser);
 
         return Response.<UserResponseDto>builder()
                 .status(200)
                 .message("User updated successfully")
+                .data(responseDto)
+                .build();
+    }
+
+    @Override
+    public Response<UserResponseDto> changePassword(ChangePasswordRequest request, Principal connectedUser) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AuthUser authUser = (AuthUser) authentication.getPrincipal();
+
+        //  Load the real User entity from database
+        User user = userRepository.findByUsername(authUser.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        //  Check if current password is correct
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new BadRequestException("Current password is not correct");
+        }
+
+        // Check if new password and confirm password match....
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new BadRequestException("New password and confirm password do not match");
+        }
+
+        // Update
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        // Save
+        userRepository.save(user);
+
+        // Response
+        UserResponseDto userResponseDto = new UserResponseDto(user);
+
+        return Response.<UserResponseDto>builder()
+                .status(200)
+                .message("Your password successfully updated")
                 .data(userResponseDto)
                 .build();
     }
@@ -116,6 +185,8 @@ public class UserServiceImpl implements UserService {
                  .data(userResponseDto)
                  .build();
     }
+
+
 
 
 }

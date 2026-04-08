@@ -23,5 +23,6 @@ public class UserResponseDto {
         this.name = user.getName();
         this.role = user.getRole();
         this.createdAt = user.getCreatedAt();
+        this.updatedAt = user.getUpdatedAt();
     }
 }
