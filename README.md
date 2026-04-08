@@ -278,10 +278,8 @@ Authorization: Bearer <token>
 
 ## 👨‍💻 Author
 
-**DenDev**
+Judens Bandal (DenDev)
 
 ---
-
-## 📄 License
 
 MIT License
