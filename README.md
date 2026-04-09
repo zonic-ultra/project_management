@@ -269,7 +269,6 @@ Authorization: Bearer <token>
 
 * Convert endpoints to RESTful (`/tasks/{id}`)
 * Add pagination & filtering
-* Global exception handling
 * Unit & integration testing
 * Docker & CI/CD
 * Role hierarchy improvements
