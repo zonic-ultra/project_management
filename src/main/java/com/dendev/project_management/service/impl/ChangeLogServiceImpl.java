@@ -1,7 +1,6 @@
 package com.dendev.project_management.service.impl;
 
 import com.dendev.project_management.dto.Response;
-import com.dendev.project_management.dto.change_log.ChangeLogDto;
 import com.dendev.project_management.dto.change_log.ChangeLogResponseDto;
 import com.dendev.project_management.entity.ChangeLog;
 import com.dendev.project_management.entity.Task;
@@ -13,13 +12,11 @@ import com.dendev.project_management.repository.TaskRepository;
 import com.dendev.project_management.service.ChangeLogService;
 import com.dendev.project_management.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChangeLogServiceImpl implements ChangeLogService {
@@ -28,31 +25,30 @@ public class ChangeLogServiceImpl implements ChangeLogService {
     private final UserService userService;
     private final TaskRepository taskRepository;
 
-    @Override
-    @Transactional
-    public Response<ChangeLogResponseDto> createChangeLog(ChangeLogDto dto) {
-        Task task = taskRepository.findById(dto.getTaskId())
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
-
-        User changedBy = userService.getCurrentUser();
-
-        ChangeLog log = ChangeLog.builder()
-                .task(task)
-                .changedBy(changedBy)
-                .action("STATUS_CHANGED")
-                .new_status(dto.getNewStatus())
-                .remarks(dto.getRemarks())
-                .build();
-
-        ChangeLog savedLog = changeLogRepository.save(log);
-
-        return Response.<ChangeLogResponseDto>builder()
-                .status(200)
-                .message("Change log created successfully")
-                .data(new ChangeLogResponseDto(savedLog))
-                .build();
-    }
-
+//    @Override
+//    @Transactional
+//    public Response<ChangeLogResponseDto> createChangeLog(ChangeLogDto dto) {
+//        Task task = taskRepository.findById(dto.getTaskId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+//
+//        User changedBy = userService.getCurrentUser();
+//
+//        ChangeLog log = ChangeLog.builder()
+//                .task(task)
+//                .changedBy(changedBy)
+//                .action("STATUS_CHANGED")
+//                .new_status(dto.getNewStatus())
+//                .remarks(dto.getRemarks())
+//                .build();
+//
+//        ChangeLog savedLog = changeLogRepository.save(log);
+//
+//        return Response.<ChangeLogResponseDto>builder()
+//                .status(200)
+//                .message("Change log created successfully")
+//                .data(new ChangeLogResponseDto(savedLog))
+//                .build();
+//    }
     @Override
     public void logStatusChange(Long taskId, TaskStatus newStatus, String remarks) {
 
@@ -64,7 +60,6 @@ public class ChangeLogServiceImpl implements ChangeLogService {
         ChangeLog log = ChangeLog.builder()
                 .task(task)
                 .changedBy(changedBy)
-                .action("STATUS_CHANGED")
                 .new_status(newStatus)
                 .remarks(remarks)
                 .build();
@@ -73,6 +68,7 @@ public class ChangeLogServiceImpl implements ChangeLogService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Response<List<ChangeLogResponseDto>> getTaskHistory(Long taskId) {
         List<ChangeLog> logs = changeLogRepository.findByTaskIdOrderByChangedAtDesc(taskId);
 
@@ -88,6 +84,7 @@ public class ChangeLogServiceImpl implements ChangeLogService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Response<List<ChangeLogResponseDto>> getChangeLogs() {
         List<ChangeLog> logs = changeLogRepository.findAllByOrderByChangedAtDesc();
 

@@ -12,16 +12,18 @@ import java.time.LocalDateTime;
 @Data
 @RequiredArgsConstructor
 public class ChangeLogResponseDto {
+    private Long  id;
     private Long taskId;
-    private String username;        // who changed the status
+    private String changeBy;        // who changed the status
     private TaskStatus newStatus;
-    private String remarks;         // optional but useful
+    private String remarks;
     private LocalDateTime changedAt;
 
     // Constructor to map from Entity
     public ChangeLogResponseDto(ChangeLog changeLog) {
-        this.taskId = changeLog.getTask() != null ? changeLog.getTask().getId() : null;
-        this.username = changeLog.getChangedBy() != null ? changeLog.getChangedBy().getUsername() : null;
+        this.id = changeLog.getId();
+        this.taskId = changeLog.getTask().getId();
+        this.changeBy = changeLog.getChangedBy().getName();
         this.newStatus = changeLog.getNew_status();
         this.remarks = changeLog.getRemarks();
         this.changedAt = changeLog.getChangedAt();

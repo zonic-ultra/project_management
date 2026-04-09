@@ -1,5 +1,6 @@
 package com.dendev.project_management.entity;
 
+import com.dendev.project_management.dto.user.UserResponseDto;
 import com.dendev.project_management.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

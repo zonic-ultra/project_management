@@ -22,8 +22,14 @@ public class ProjectController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<?>>  getAllProjects() {
+    public ResponseEntity<Response<List<ProjectResponseDto>>>getAllProjects() {
         return ResponseEntity.ok(projectService.getProjects());
+    }
+
+    @GetMapping("/get_project")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Response<ProjectResponseDto>> getProject(@RequestParam Long id) {
+        return ResponseEntity.ok(projectService.getProject(id));
     }
 
     @PostMapping("/create")

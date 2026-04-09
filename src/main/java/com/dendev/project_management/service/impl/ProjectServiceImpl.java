@@ -3,22 +3,19 @@ package com.dendev.project_management.service.impl;
 import com.dendev.project_management.dto.Response;
 import com.dendev.project_management.dto.project.ProjectRequestDto;
 import com.dendev.project_management.dto.project.ProjectResponseDto;
-import com.dendev.project_management.dto.user.UserResponseDto;
 import com.dendev.project_management.entity.Project;
 import com.dendev.project_management.entity.User;
 import com.dendev.project_management.exceptions.ResourceNotFoundException;
 import com.dendev.project_management.repository.ProjectRepository;
-import com.dendev.project_management.repository.UserRepository;
 import com.dendev.project_management.service.ProjectService;
 import com.dendev.project_management.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
@@ -87,15 +84,31 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Response<?> getProjects() {
+    @Transactional(readOnly = true)
+    public Response<List<ProjectResponseDto>> getProjects() {
         List<Project> projects = projectRepository.findAll();
 
+        List<ProjectResponseDto> projectResponse = projects.stream()
+                .map(ProjectResponseDto::new)
+                .toList();
 
-
-        return Response.builder()
+        return Response.<List<ProjectResponseDto>>builder()
                 .status(200)
                 .message("Success")
-                .data(projects)
+                .data(projectResponse)
+                .build();
+    }
+
+    @Override
+    public Response<ProjectResponseDto> getProject(Long id) {
+        Project project = projectRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Project not found"));
+
+        ProjectResponseDto projectResponse = new ProjectResponseDto(project);
+
+        return Response.<ProjectResponseDto>builder()
+                .status(200)
+                .message("Project found")
+                .data(projectResponse)
                 .build();
     }
 }
