@@ -1,26 +1,18 @@
 package com.dendev.project_management.service.impl;
 
 import com.dendev.project_management.dto.Response;
-import com.dendev.project_management.dto.auth.LoginRequest;
-import com.dendev.project_management.dto.auth.RegisterRequest;
 import com.dendev.project_management.dto.user.ChangePasswordRequest;
-import com.dendev.project_management.dto.user.UserDto;
+import com.dendev.project_management.dto.user.UserRequestDto;
 import com.dendev.project_management.dto.user.UserResponseDto;
 import com.dendev.project_management.entity.User;
-import com.dendev.project_management.enums.Role;
 import com.dendev.project_management.exceptions.BadRequestException;
 import com.dendev.project_management.exceptions.ResourceNotFoundException;
 import com.dendev.project_management.repository.UserRepository;
 import com.dendev.project_management.security.AuthUser;
-import com.dendev.project_management.security.JwtUtils;
 import com.dendev.project_management.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,9 +20,7 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -62,31 +52,31 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = Optional.of(userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found!")));
 
+
         return user.get();
     }
 
-
     @Override
-    public Response<UserResponseDto> updateMember(Long id, UserDto userDto) {
+    public Response<UserResponseDto> updateMember(Long id, UserRequestDto userRequestDto) {
         User existingUser = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!"));
 
         // Update fields only if they are provided (not null and not blank)
-        if (userDto.getUsername() != null && !userDto.getUsername().isBlank()) {
+        if (userRequestDto.getUsername() != null && !userRequestDto.getUsername().isBlank()) {
 
             // Check if username is already taken by another user
-            boolean usernameTaken = userRepository.existsByUsernameAndIdNot(userDto.getUsername(), id);
+            boolean usernameTaken = userRepository.existsByUsernameAndIdNot(userRequestDto.getUsername(), id);
             if (usernameTaken) {
                 throw new BadRequestException("Username already taken");
             }
-            existingUser.setUsername(userDto.getUsername());
+            existingUser.setUsername(userRequestDto.getUsername());
         }
 
-        if (userDto.getName() != null && !userDto.getName().isBlank()) {
-            existingUser.setName(userDto.getName());
+        if (userRequestDto.getName() != null && !userRequestDto.getName().isBlank()) {
+            existingUser.setName(userRequestDto.getName());
         }
 
-        if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
-            existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        if (userRequestDto.getPassword() != null && !userRequestDto.getPassword().isBlank()) {
+            existingUser.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         }
 
         userRepository.save(existingUser);

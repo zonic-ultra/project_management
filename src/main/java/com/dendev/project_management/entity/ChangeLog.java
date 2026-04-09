@@ -36,8 +36,6 @@ public class ChangeLog {
     @Column(nullable = false)
     private LocalDateTime changedAt;
 
-    private String action;
-
     @Enumerated(EnumType.STRING)
     private TaskStatus new_status;
 

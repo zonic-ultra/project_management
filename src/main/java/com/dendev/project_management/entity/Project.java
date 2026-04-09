@@ -32,10 +32,6 @@ public class Project {
     @Column(nullable = false)
     private String project_description;
 
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonIgnore
-    private List<Task> tasks = new ArrayList<>();
-
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
@@ -47,4 +43,8 @@ public class Project {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List<Task> tasks = new ArrayList<>();
 }
