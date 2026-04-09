@@ -274,7 +274,6 @@ Authorization: Bearer <token>
 
 * Convert to RESTful endpoints (`/projects/{id}`)
 * Add pagination & filtering
-* Global exception handler
 * Unit & integration tests
 * Docker & CI/CD
 * API documentation (Postman / Swagger optional)
