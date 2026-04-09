@@ -5,7 +5,6 @@ import com.dendev.project_management.dto.change_log.ChangeLogDto;
 import com.dendev.project_management.dto.change_log.ChangeLogResponseDto;
 import com.dendev.project_management.dto.task.TaskRequestDto;
 import com.dendev.project_management.dto.task.TaskResponseDto;
-import com.dendev.project_management.entity.ChangeLog;
 import com.dendev.project_management.entity.Project;
 import com.dendev.project_management.entity.Task;
 import com.dendev.project_management.entity.User;
@@ -19,14 +18,12 @@ import com.dendev.project_management.service.ChangeLogService;
 import com.dendev.project_management.service.TaskService;
 import com.dendev.project_management.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
@@ -38,16 +35,13 @@ public class TaskServiceImpl implements TaskService {
     private final ChangeLogService changeLogService;
 
     @Override
-    @Transactional
     public Response<TaskResponseDto> createTask(TaskRequestDto dto) {
 
         User assignedUser = userRepository.findById(dto.getUser_id())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-
         Project project = projectRepository.findById(dto.getProject_id())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
-
 
         Task task = Task.builder()
                 .task_name(dto.getTask_name())
@@ -60,7 +54,7 @@ public class TaskServiceImpl implements TaskService {
 
         Task savedTask = taskRepository.save(task);
 
-        changeLogService.logStatusChange(savedTask.getId(), dto.getTaskStatus(), "Task created successfully");
+        changeLogService.logStatusChange(savedTask.getId(), dto.getTaskStatus(), "New task created");
 
         return Response.<TaskResponseDto>builder()
                 .status(200)
@@ -70,7 +64,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Transactional
     public Response<TaskResponseDto> updateTask(Long id, TaskRequestDto dto) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
@@ -96,7 +89,6 @@ public class TaskServiceImpl implements TaskService {
 
         changeLogService.logStatusChange(updatedTask.getId(), updatedTask.getTaskStatus(), "Task updated successfully");
 
-
         return Response.<TaskResponseDto>builder()
                 .status(200)
                 .message("Task updated successfully")
@@ -105,7 +97,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Transactional
     public Response<Void> deleteTask(Long id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
@@ -131,6 +122,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Response<List<TaskResponseDto>> findAllTasks() {
         User currentUser = userService.getCurrentUser();
         List<Task> taskList;
@@ -169,19 +161,18 @@ public class TaskServiceImpl implements TaskService {
 
         User currentUser = userService.getCurrentUser();
 
-
         changeLogService.logStatusChange(updatedTask.getId(), newStatus, changeLogDto.getRemarks());
 
         ChangeLogResponseDto responseDto = new ChangeLogResponseDto();
         responseDto.setTaskId(updatedTask.getId());
-        responseDto.setUsername(currentUser.getUsername());
+        responseDto.setChangeBy(currentUser.getName());
         responseDto.setNewStatus(newStatus);
         responseDto.setRemarks(changeLogDto.getRemarks());
         responseDto.setChangedAt(LocalDateTime.now());
 
         return Response.<ChangeLogResponseDto>builder()
                 .status(200)
-                .message("Task status updated successfully")
+                .message("Task status updated to" + newStatus)
                 .data(responseDto)
                 .build();
     }

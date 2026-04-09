@@ -2,12 +2,11 @@ package com.dendev.project_management.controller;
 
 import com.dendev.project_management.dto.Response;
 import com.dendev.project_management.dto.user.ChangePasswordRequest;
-import com.dendev.project_management.dto.user.UserDto;
+import com.dendev.project_management.dto.user.UserRequestDto;
 import com.dendev.project_management.dto.user.UserResponseDto;
 import com.dendev.project_management.entity.User;
 import com.dendev.project_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -49,8 +48,8 @@ public class UserController {
 
     @PutMapping("/update_member")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Response<UserResponseDto>> update(@RequestParam("id") Long id, @RequestBody UserDto userDto){
-        return ResponseEntity.ok(userService.updateMember(id, userDto));
+    public ResponseEntity<Response<UserResponseDto>> update(@RequestParam("id") Long id, @RequestBody UserRequestDto userRequestDto){
+        return ResponseEntity.ok(userService.updateMember(id, userRequestDto));
     }
 
     @PatchMapping("/change_password")
