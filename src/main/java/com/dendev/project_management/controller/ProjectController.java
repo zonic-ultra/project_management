@@ -28,7 +28,7 @@ public class ProjectController {
 
     @GetMapping("/get_project")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<ProjectResponseDto>> getProject(@RequestParam Long id) {
+    public ResponseEntity<Response<ProjectResponseDto>> getProject(@RequestParam("id") Long id) {
         return ResponseEntity.ok(projectService.getProject(id));
     }
 
