@@ -22,13 +22,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/total_members")
+    public ResponseEntity<Long> getTotalMember() {
+        return ResponseEntity.ok(userService.getTotalMembers());
+    }
+
     @GetMapping("/current")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<User> getCurrentUser() {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
 
-    @GetMapping("/get_all_member")
+    @GetMapping("/get_all_members")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<List<UserResponseDto>>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllMembers());

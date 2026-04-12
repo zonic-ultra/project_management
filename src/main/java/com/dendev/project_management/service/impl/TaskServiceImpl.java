@@ -176,6 +176,11 @@ public class TaskServiceImpl implements TaskService {
                 .data(responseDto)
                 .build();
     }
+
+    @Override
+    public long getTotalTasks() {
+        return taskRepository.count();
+    }
 }
 
 

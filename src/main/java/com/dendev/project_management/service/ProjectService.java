@@ -13,4 +13,5 @@ public interface ProjectService {
     Response<List<ProjectResponseDto>> getProjects();
     Response<ProjectResponseDto> getProject(Long id);
     Response<ProjectResponseDto> createProject(ProjectRequestDto projectRequestDto);
+    long getTotalProjects();
 }

@@ -127,6 +127,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public long getTotalMembers() {
+        return userRepository.count();
+    }
+
+    @Override
     public Response<Void> deleteMember(Long id) {
         userRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found!"));

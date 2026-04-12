@@ -22,6 +22,11 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @GetMapping("/total_tasks")
+    public ResponseEntity<Long> getTotalTask(){
+        return ResponseEntity.ok(taskService.getTotalTasks());
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<Response<List<TaskResponseDto>>> findAllTasks() {

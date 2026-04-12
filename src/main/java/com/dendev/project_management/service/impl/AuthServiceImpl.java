@@ -66,10 +66,13 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtUtils.generateToken(user.getUsername());
 
+
         return Response.builder()
                 .status(200)
                 .message("User login successfully")
-                .data(token)
+                .token(token)
+//                .data(user)
+                .data(user.getRole())
                 .build();
 
     }

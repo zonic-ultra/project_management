@@ -47,6 +47,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public long getTotalProjects() {
+        return projectRepository.count();
+    }
+
+    @Override
     public Response<ProjectResponseDto> updateProject(Long id, ProjectRequestDto projectRequestDto) {
         Project project = projectRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Project not found"));
 

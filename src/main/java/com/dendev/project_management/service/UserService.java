@@ -16,4 +16,5 @@ public interface UserService {
     Response<Void> deleteMember(Long id);
     Response<UserResponseDto> getMember(Long id);
     Response<UserResponseDto> changePassword(ChangePasswordRequest request, Principal connectedUser);
+    long getTotalMembers();
 }

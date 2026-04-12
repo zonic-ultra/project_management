@@ -16,4 +16,5 @@ public interface TaskService {
     Response<TaskResponseDto> findTask(Long id);
     Response<List<TaskResponseDto>> findAllTasks();
     Response<ChangeLogResponseDto> updateTaskStatus(Long id, ChangeLogDto changeLogDto);
+    long getTotalTasks();
 }

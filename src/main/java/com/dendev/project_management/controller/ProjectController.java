@@ -20,6 +20,11 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
+    @GetMapping("/total_projects")
+    public ResponseEntity<Long> getTotalProject() {
+        return ResponseEntity.ok(projectService.getTotalProjects());
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<List<ProjectResponseDto>>>getAllProjects() {
