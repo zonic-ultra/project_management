@@ -16,6 +16,7 @@ public class CorsConfig {
                     registry.addMapping("/api/**")
                             .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                             .allowedOrigins("http://localhost:3000/")
+                            .allowedOrigins("https://project-management-dendev.vercel.app/")
                             .allowedHeaders("*");
                 }
         };

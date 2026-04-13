@@ -1,6 +1,7 @@
 package com.dendev.project_management.dto.task;
 
 import com.dendev.project_management.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskRequestDto {
 
     @NotBlank(message = "Task name is required!")

@@ -16,6 +16,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin(origins = "https://project-management-dendev.vercel.app")
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -52,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/update_member")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<Response<UserResponseDto>> update(@RequestParam("id") Long id, @RequestBody UserRequestDto userRequestDto){
         return ResponseEntity.ok(userService.updateMember(id, userRequestDto));
     }

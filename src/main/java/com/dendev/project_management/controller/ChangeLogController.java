@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "https://project-management-dendev.vercel.app")
 @RequestMapping("/api/change_logs")
 public class ChangeLogController {
 
