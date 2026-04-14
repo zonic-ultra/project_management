@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 //@CrossOrigin(origins = "http://localhost:3000")
-@CrossOrigin(origins = "https://project-management-dendev.vercel.app")
+//@CrossOrigin(origins = "https://project-management-dendev.vercel.app")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

@@ -29,7 +29,7 @@ public class SecurityFilterConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(req -> req.requestMatchers("/api/auth/**","/login","/register",
+                .authorizeHttpRequests(req -> req.requestMatchers("/","/api/auth/**","/login","/register",
                                 "/api/users/total_members",
                                 "/api/tasks/total_tasks",
                                 "/api/projects/total_projects").permitAll()
