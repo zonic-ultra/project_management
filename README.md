@@ -311,14 +311,15 @@ Authorization: Bearer <token>
 git clone https://github.com/your-username/project-management.git
 cd project-management
 
----
-
-
+```
 
 ---
 ## 👨‍💻 Author
-# Judens Bandal (DenDev)
+** Judens Bandal (DenDev)**
 
-**DenDev**
+
+
+
+
 
 
