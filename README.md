@@ -299,7 +299,6 @@ Authorization: Bearer <token>
 
 ## 📦 Future Improvements
 * Unit & integration tests
-* 
 ---
 
 
