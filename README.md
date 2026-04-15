@@ -9,7 +9,7 @@ The system enforces **role-based access control (RBAC)** and provides a complete
 ## 🌐 Live Deployment
 
 - 🔗 **Frontend (React + Tailwind)**  
-  https://project-management-dendev.vercel.app/logs
+  https://project-management-dendev.vercel.app/
 
 - ☁️ **Backend API**  
   Dockerized and deployed on **Render**
