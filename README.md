@@ -1,4 +1,4 @@
-📌## Project Management System API
+## 📌 Project Management System API
 
 A secure and scalable REST API for managing **users, projects, tasks, and change logs**, built using **Java 21**, **Spring Boot**, **Spring Security (JWT)**, and **PostgreSQL**.
 
