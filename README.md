@@ -98,9 +98,13 @@ The system enforces **role-based access control (RBAC)** and provides a complete
 * **Lombok**
 
 **Frontend**
-- React (Create React App)  
-- Tailwind CSS  
-- Axios  
+- Framework: React
+- Styling: Tailwind CSS with a custom theme
+- Routing: React Router
+- API Communication: Axios
+- Icons: Lucide React
+- Animation: Motion
+- Security: crypto-js for encrypting session data in local storage
 
 **Deployment**
 - Docker  
