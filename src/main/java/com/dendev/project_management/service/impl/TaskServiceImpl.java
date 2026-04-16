@@ -168,7 +168,7 @@ public class TaskServiceImpl implements TaskService {
         responseDto.setChangeBy(currentUser.getName());
         responseDto.setNewStatus(newStatus);
         responseDto.setRemarks(changeLogDto.getRemarks());
-        responseDto.setChangedAt(LocalDateTime.now());
+        responseDto.setCreatedAt(LocalDateTime.now());
 
         return Response.<ChangeLogResponseDto>builder()
                 .status(200)

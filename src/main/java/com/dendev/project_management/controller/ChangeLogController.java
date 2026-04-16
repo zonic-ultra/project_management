@@ -24,12 +24,6 @@ public class ChangeLogController {
         return ResponseEntity.ok(changeLogService.getChangeLogs());
     }
 
-    @GetMapping("/get_change_log")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response<List<ChangeLogResponseDto>>> getChangeLogs(@RequestParam("id") Long id) {
-        return ResponseEntity.ok(changeLogService.getTaskHistory(id));
-    }
-
     @DeleteMapping("/delete")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Response<Void>> log(@RequestParam("id") Long id){

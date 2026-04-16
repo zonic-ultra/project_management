@@ -10,11 +10,7 @@ import com.dendev.project_management.enums.TaskStatus;
 import java.util.List;
 
 public interface ChangeLogService {
-//    Response<ChangeLogResponseDto> createChangeLog(ChangeLogDto dto);
-
     void logStatusChange(Long taskId, TaskStatus newStatus, String remarks);
-
-    Response<List<ChangeLogResponseDto>> getTaskHistory(Long taskId);
 
     Response<List<ChangeLogResponseDto>> getChangeLogs();
 

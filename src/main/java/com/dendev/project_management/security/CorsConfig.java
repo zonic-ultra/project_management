@@ -15,20 +15,21 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ Allow credentials (needed for JWT / auth headers)
+        //  Allow credentials (needed for JWT / auth headers)
         config.setAllowCredentials(true);
 
-        // ✅ Your frontend URL (NO trailing slash)
+        //  Your frontend URL (NO trailing slash)
         config.setAllowedOrigins(List.of(
-                "https://project-management-dendev.vercel.app"
+//                "https://project-management-dendev.vercel.app"
+                "http://localhost:3000"
         ));
 
-        // ✅ Allow all common methods
+        // Allow all common methods
         config.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "PATCH"
         ));
 
-        // ✅ Allow all headers
+        //  Allow all headers
         config.setAllowedHeaders(List.of("*"));
 
         // ✅ Optional (good for Authorization header)
