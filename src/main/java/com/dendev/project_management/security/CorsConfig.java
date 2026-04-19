@@ -32,7 +32,7 @@ public class CorsConfig {
         //  Allow all headers
         config.setAllowedHeaders(List.of("*"));
 
-        // ✅ Optional (good for Authorization header)
+        // Optional (good for Authorization header)
         config.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
