@@ -18,7 +18,7 @@ public class CorsConfig {
         //  Allow credentials (needed for JWT / auth headers)
         config.setAllowCredentials(true);
 
-        //  Your frontend URL (NO trailing slash)
+        //  Your frontend URL
         config.setAllowedOrigins(List.of(
 //                "https://project-management-dendev.vercel.app"
                 "http://localhost:3000"
