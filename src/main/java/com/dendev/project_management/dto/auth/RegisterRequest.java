@@ -21,6 +21,6 @@ public class RegisterRequest {
 
     private Role role;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
