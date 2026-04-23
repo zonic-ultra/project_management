@@ -75,6 +75,18 @@ The system enforces **role-based access control (RBAC)** and provides a complete
 
 ---
 
+
+### 📨 Email Notification
+
+- Automatically sends an **email notification** when a task is created  
+- The **assigned user** receives the notification  
+- Includes:
+  - Task name  
+  - Description  
+  - Due date  
+ 
+  ---
+
 ### 📝 Change Logs
 
 * Automatically created when task status changes
