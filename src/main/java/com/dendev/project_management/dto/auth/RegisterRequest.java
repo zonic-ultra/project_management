@@ -20,7 +20,4 @@ public class RegisterRequest {
     private String name;
 
     private Role role;
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
