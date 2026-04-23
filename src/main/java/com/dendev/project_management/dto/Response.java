@@ -1,8 +1,7 @@
 package com.dendev.project_management.dto;
 
-import com.dendev.project_management.enums.Role;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.Builder;
 import lombok.Data;
 

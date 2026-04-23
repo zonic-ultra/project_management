@@ -15,6 +15,7 @@ import com.dendev.project_management.repository.ProjectRepository;
 import com.dendev.project_management.repository.TaskRepository;
 import com.dendev.project_management.repository.UserRepository;
 import com.dendev.project_management.service.ChangeLogService;
+import com.dendev.project_management.service.EmailService;
 import com.dendev.project_management.service.TaskService;
 import com.dendev.project_management.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class TaskServiceImpl implements TaskService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final ChangeLogService changeLogService;
+    private final EmailService emailService;
 
     @Override
     public Response<TaskResponseDto> createTask(TaskRequestDto dto) {
@@ -53,6 +55,37 @@ public class TaskServiceImpl implements TaskService {
                 .build();
 
         Task savedTask = taskRepository.save(task);
+
+        String emailBody = String.format(
+                """
+                Hello %s,
+        
+                You have been assigned a new task in NEXUS.
+        
+                Task Details:
+                - Task Title : %s
+                - Due Date   : %s
+        
+                Description:
+                %s
+        
+                Please log in to NEXUS and start working on it as soon as possible.
+        
+                Best regards,
+                NEXUS
+                """,
+                assignedUser.getName(),
+                savedTask.getTask_name(),
+                savedTask.getDueDate(),
+                savedTask.getContents()
+        );
+
+        // Send plain text email
+        emailService.sendEmail(
+                assignedUser.getUsername(),
+                "NEXUS - New Task Assigned to You",
+                emailBody
+        );
 
         changeLogService.logStatusChange(savedTask.getId(), dto.getTaskStatus(), "New task created");
 

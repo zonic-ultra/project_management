@@ -20,8 +20,8 @@ public class CorsConfig {
 
         //  Your frontend URL
         config.setAllowedOrigins(List.of(
-//                "https://project-management-dendev.vercel.app"
-                "http://localhost:3000"
+                "https://project-management-dendev.vercel.app"
+//                "http://localhost:3000"
         ));
 
         // Allow all common methods
