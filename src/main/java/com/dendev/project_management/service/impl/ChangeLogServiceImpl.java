@@ -27,12 +27,12 @@ public class ChangeLogServiceImpl implements ChangeLogService {
     private final TaskRepository taskRepository;
 
     @Override
-    public void logStatusChange(Long taskId, TaskStatus newStatus, String remarks) {
+    public void logStatusChange(Task task, TaskStatus newStatus, String remarks, User changedBy) {
 
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+//        Task task = taskRepository.findById()
+//                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
-        User changedBy = userService.getCurrentUser();
+//        User changedBy = userService.getCurrentUser();
 
         ChangeLog log = ChangeLog.builder()
                 .task(task)

@@ -87,7 +87,7 @@ public class TaskServiceImpl implements TaskService {
                 emailBody
         );
 
-        changeLogService.logStatusChange(savedTask.getId(), dto.getTaskStatus(), "New task created");
+        changeLogService.logStatusChange(savedTask, dto.getTaskStatus(), "New task created", assignedUser );
 
         return Response.<TaskResponseDto>builder()
                 .status(200)
@@ -120,7 +120,7 @@ public class TaskServiceImpl implements TaskService {
 
         Task updatedTask = taskRepository.save(task);
 
-        changeLogService.logStatusChange(updatedTask.getId(), updatedTask.getTaskStatus(), "Task updated successfully");
+        changeLogService.logStatusChange(updatedTask, updatedTask.getTaskStatus(), "Task updated successfully", task.getAssignedUser());
 
         return Response.<TaskResponseDto>builder()
                 .status(200)
@@ -190,18 +190,30 @@ public class TaskServiceImpl implements TaskService {
         }
 
         task.setTaskStatus(newStatus);
-        Task updatedTask = taskRepository.save(task);
 
         User currentUser = userService.getCurrentUser();
 
-        changeLogService.logStatusChange(updatedTask.getId(), newStatus, changeLogDto.getRemarks());
+        Task updatedTask = taskRepository.save(task);
 
-        ChangeLogResponseDto responseDto = new ChangeLogResponseDto();
-        responseDto.setTaskId(updatedTask.getId());
-        responseDto.setChangeBy(currentUser.getName());
-        responseDto.setNewStatus(newStatus);
-        responseDto.setRemarks(changeLogDto.getRemarks());
-        responseDto.setCreatedAt(LocalDateTime.now());
+
+        changeLogService.logStatusChange(updatedTask, newStatus, changeLogDto.getRemarks(), currentUser);
+
+//        ChangeLogResponseDto responseDto = new ChangeLogResponseDto();
+//        responseDto.setTaskId(updatedTask.getId());
+//        responseDto.setChangeBy(currentUser.getName());
+//        responseDto.setNewStatus(newStatus);
+//        responseDto.setRemarks(changeLogDto.getRemarks());
+//        responseDto.setCreatedAt(LocalDateTime.now());
+
+        // Build response
+        ChangeLogResponseDto responseDto = ChangeLogResponseDto.builder()
+                .taskId(task.getId())
+                .changeBy(currentUser.getName())
+                .newStatus(newStatus)
+                .remarks(changeLogDto.getRemarks())
+                .createdAt(LocalDateTime.now())
+                .build();
+
 
         return Response.<ChangeLogResponseDto>builder()
                 .status(200)

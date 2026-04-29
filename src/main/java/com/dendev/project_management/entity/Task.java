@@ -2,7 +2,6 @@ package com.dendev.project_management.entity;
 
 
 import com.dendev.project_management.enums.TaskStatus;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -49,7 +48,7 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus taskStatus = TaskStatus.TODO;
 
-    @FutureOrPresent
+//    @FutureOrPresent
     private LocalDate dueDate;
 
     @CreatedDate

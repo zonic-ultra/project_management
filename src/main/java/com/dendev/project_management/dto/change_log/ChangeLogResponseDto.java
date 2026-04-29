@@ -5,14 +5,15 @@ import com.dendev.project_management.entity.Task;
 import com.dendev.project_management.entity.User;
 import com.dendev.project_management.enums.TaskStatus;
 import jakarta.persistence.Column;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Data
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChangeLogResponseDto {
     private Long  id;
     private Long taskId;

@@ -18,7 +18,8 @@ import java.util.function.Function;
 @Service
 @Slf4j
 public class JwtUtils {
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
+    private static final long EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 30L;
+
 
     private SecretKey secretKey;
 
